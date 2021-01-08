@@ -132,6 +132,7 @@ export default {
               this.getSubject();
               this.$toastr.s("Subject added successful");
               $('#addModal').modal('hide');
+              this.subject.name = '';
             }
           })
         }

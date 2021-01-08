@@ -230,19 +230,29 @@ export default {
     createStudent: function () {
       this.$validator.validateAll().then(result => {
         if (result) {
-          Meteor.call('addStudent', this.userInfo, (error, result) => {
+          Meteor.call('checkIfUserExists', this.userInfo,  (error, result) => {
             if (error) {
               console.log(error)
             } else {
-              this.getStudent();
-              this.userInfo.name = '';
-              this.userInfo.email = '';
-              this.userInfo.dob = '';
-              this.userInfo.phone = '';
-              this.$toastr.s("Student added successful");
-              $('#addModal').modal('hide');
+              if (result === false) {
+                Meteor.call('addStudent', this.userInfo, (error, result) => {
+                  if (error) {
+                    console.log(error)
+                  } else {
+                    this.getStudent();
+                    this.userInfo.name = '';
+                    this.userInfo.email = '';
+                    this.userInfo.dob = '';
+                    this.userInfo.phone = '';
+                    this.$toastr.s("Student added successful");
+                    $('#addModal').modal('hide');
+                  }
+                })
+              } else {
+                this.$toastr.w("Student exist with this email");
+              }
             }
-          })
+          });
         }
       })
     },
