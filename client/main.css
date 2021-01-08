@@ -1,0 +1,16 @@
+/*Global css*/
+/*This css affect all component*/
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif!important;
+}
+
+.btn{
+  border-radius: 10px;
+}
+
+
+/*helpers*/
+.brs-10{
+  border-radius: 10px;
+}
