@@ -167,9 +167,7 @@
             <div class="mb-3">
               <select class="form-control" id="sub" @change="addSubjectToStudent($event)">
                 <option value="" selected>Select Subject</option>
-                <option v-for="eachData in subjectData" :value="eachData._id">
-                  {{ eachData.name }}
-                </option>
+                <option v-for="eachData in subjectData" :value="eachData._id">{{ eachData.name }}</option>
               </select>
             </div>
           </div>
@@ -220,9 +218,7 @@ export default {
       },
       userData: [],
       subjectData: [],
-      ReservesubjectData: [],
       eachStudent: null,
-      selectSubject: [],
     }
   },
   methods: {
@@ -284,6 +280,14 @@ export default {
           this.getStudent();
           this.$toastr.e("Student deleted successful");
           $('#deleteModal').modal('hide');
+          Meteor.call('updateSubjectStudent', this.eachStudent, (error, result) => {
+            if (error) {
+              console.log(error)
+            } else {
+
+
+            }
+          })
         }
       })
     },
@@ -304,17 +308,22 @@ export default {
           console.log(error)
         } else {
           this.subjectData = result;
-          //for not change the array. this data will need for updating subject
-          this.ReservesubjectData = result;
         }
       })
     },
     //open modal for add subject to student
     openSubjectModal: function (data) {
-      this.subjectData = this.ReservesubjectData
-      this.eachStudent = data;
+      //call without function for get data
+      Meteor.call('getSubject', {}, (error, result) => {
+        if (error) {
+          console.log(error)
+        } else {
+          this.subjectData = result;
+          this.eachStudent = data;
+          this.AlreadyHasSub()
+        }
+      })
       $('#subjectModal').modal('show');
-      this.AlreadyHasSub()
     },
     //add student to subject and subject to student
     addSubjectToStudent: function (e) {
@@ -325,36 +334,30 @@ export default {
         subject: subName,
         subjectID: subID,
       }
-      Meteor.call('addSubjectToStudent', updateData, (error, result) => {
-        if (error) {
-          console.log(error)
-        } else {
-          this.getStudent();
-          this.$toastr.s("Subject added successful");
-        }
-      })
-      Meteor.call('addStudentToSubject', updateData, (error, result) => {
-        if (error) {
-          console.log(error)
-        } else {
-          this.getStudent();
-        }
-      })
+      if (subID !== '') {
+        Meteor.call('addSubjectToStudent', updateData, (error, result) => {
+          if (error) {
+            console.log(error)
+          } else {
+            this.getStudent();
+            this.$toastr.s("Subject added successful");
+            this.subjectData = this.subjectData.filter(item => !subID.includes(item._id));
+          }
+        })
+        Meteor.call('addStudentToSubject', updateData, (error, result) => {
+          if (error) {
+            console.log(error)
+          } else {
+            this.getStudent();
+          }
+        })
+      }else {
+
+      }
     },
     AlreadyHasSub: function () {
-      if (this.eachStudent !== null) {
-        if (this.eachStudent.subjectName !== undefined) {
-          this.eachStudent.subjectName.forEach((v) => {
-            this.subjectData.forEach((sName, i) => {
-              if (v.toLowerCase() == sName.name.toLowerCase()) {
-                console.log(this.subjectData.indexOf(v))
-                this.subjectData.splice(this.subjectData.indexOf(v), 1)
-              } else {
-              }
-            })
-          })
-          console.log(this.subjectData)
-        }
+      if (this.eachStudent.subjectName !== undefined) {
+        this.subjectData = this.subjectData.filter(item => !this.eachStudent.subjectName.includes(item.name));
       }
     }
   },

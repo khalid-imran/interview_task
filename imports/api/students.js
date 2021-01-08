@@ -13,6 +13,18 @@ Meteor.methods({
     deleteStudent(student) {
         return students.remove({_id: student._id})
     },
+    updateSubjectStudent(data) {
+        let allsbj =  subjects.find({}).fetch()
+        allsbj.forEach((v) => {
+            if (v.studentId !== undefined) {
+                return subjects.update(
+                    {_id: v._id},
+                    {$pull: {studentName: data.name, studentId: data._id}})
+            } else {
+                return false
+            }
+        })
+    },
     // edit student
     editStudent(student) {
         return students.update(
@@ -29,7 +41,7 @@ Meteor.methods({
         let rv;
         rv = students.update(
             {_id: data.student._id},
-            {$push: {subjectName: data.subject}})
+            {$push: {subjectName: data.subject, subId: data.subjectID}})
 
         return rv;
     },
@@ -38,7 +50,7 @@ Meteor.methods({
         let rv;
         rv = subjects.update(
             {_id: data.subjectID},
-            {$push: {studentName: data.student.name}})
+            {$push: {studentName: data.student.name, studentId: data.student._id}})
 
         return rv;
     }

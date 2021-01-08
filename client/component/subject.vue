@@ -170,6 +170,14 @@ export default {
           this.getSubject();
           this.$toastr.e("Subject deleted successful");
           $('#deleteModal').modal('hide');
+          Meteor.call('updateStudentSubject', this.eachSubject, (error, result) => {
+            if (error) {
+              console.log(error)
+            } else {
+
+
+            }
+          })
         }
       })
     },
