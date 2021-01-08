@@ -5,6 +5,10 @@ import {students} from "./students";
 export const subjects = new Mongo.Collection('subject')
 
 Meteor.methods({
+
+    checkIfSubExists(subject) {
+        return subjects.findOne({name: subject.name}) ? true : false;
+    },
     // create subject
     addSubject(subject) {
         return subjects.insert(subject)

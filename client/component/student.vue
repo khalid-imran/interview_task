@@ -52,6 +52,7 @@
       </table>
     </div>
 
+    <!--add modal-->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -103,6 +104,7 @@
         </div>
       </div>
     </div>
+    <!--edit modal-->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -154,6 +156,7 @@
         </div>
       </div>
     </div>
+    <!--subject modal-->
     <div class="modal fade" id="subjectModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -182,6 +185,7 @@
         </div>
       </div>
     </div>
+    <!--delete modal-->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -256,7 +260,7 @@ export default {
         }
       })
     },
-    //open modal for edit subject
+    //open modal for edit student
     openEditModal: function (data) {
       this.eachStudent = data;
       setTimeout(() => {
@@ -345,6 +349,7 @@ export default {
         subjectID: subID,
       }
       if (subID !== '') {
+        //add student to subject
         Meteor.call('addSubjectToStudent', updateData, (error, result) => {
           if (error) {
             console.log(error)
@@ -354,6 +359,7 @@ export default {
             this.subjectData = this.subjectData.filter(item => !subID.includes(item._id));
           }
         })
+        //add  subject to student
         Meteor.call('addStudentToSubject', updateData, (error, result) => {
           if (error) {
             console.log(error)
@@ -365,6 +371,7 @@ export default {
 
       }
     },
+    //check if student has already assign to subject
     AlreadyHasSub: function () {
       if (this.eachStudent.subjectName !== undefined) {
         this.subjectData = this.subjectData.filter(item => !this.eachStudent.subjectName.includes(item.name));

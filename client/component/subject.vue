@@ -34,7 +34,7 @@
         </tbody>
       </table>
     </div>
-
+    <!--add modal-->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -59,6 +59,7 @@
         </div>
       </div>
     </div>
+    <!--edit modal-->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" v-if="eachSubject != null">
         <div class="modal-content">
@@ -83,6 +84,7 @@
         </div>
       </div>
     </div>
+    <!--delete modal-->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -125,16 +127,26 @@ export default {
     createSubject: function () {
       this.$validator.validateAll().then(result => {
         if (result) {
-          Meteor.call('addSubject', this.subject, (error, result) => {
+          Meteor.call('checkIfSubExists', this.subject,  (error, result) => {
             if (error) {
               console.log(error)
             } else {
-              this.getSubject();
-              this.$toastr.s("Subject added successful");
-              $('#addModal').modal('hide');
-              this.subject.name = '';
+              if (result === false) {
+                Meteor.call('addSubject', this.subject, (error, result) => {
+                  if (error) {
+                    console.log(error)
+                  } else {
+                    this.getSubject();
+                    this.$toastr.s("Subject added successful");
+                    $('#addModal').modal('hide');
+                    this.subject.name = '';
+                  }
+                })
+              } else {
+                this.$toastr.w("Subject exist with this name");
+              }
             }
-          })
+          });
         }
       })
     },
